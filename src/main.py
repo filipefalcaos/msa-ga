@@ -6,7 +6,8 @@ import nwalign3 as nw
 k = 1.2
 C = 100
 e = 1.5
-N = 100
+N = 1000
+mutation_rate = 0.03
 
 
 # Prints a chromosome's sequences
@@ -159,8 +160,10 @@ for c in range(C):
     print("\nChromosome " + str(c + 1) + ":")
     print_chromosome(lines_list_aux)
 
+# Repeat N times or until a good solution
+# appears
 count = 0
-while count < 1:
+while count < N:
 
     # Evaluate all chromosomes
     evals = []
@@ -170,52 +173,83 @@ while count < 1:
     # New population
     new_pop = []
 
-    # Normalize the fitness
-    pop_sum = sum(evals)
-    evals_aux = []
-    for ev in evals:
-        evals_aux.append(ev / pop_sum)
+    # Repeat C times
+    for i in range(C):
+        # Normalize the fitness
+        pop_sum = sum(evals)
+        evals_aux = []
+        for ev in evals:
+            evals_aux.append(ev / pop_sum)
 
-    # Build the mating pool
-    pool = []
-    for i in range(len(pop)):
-        prob = int(evals_aux[i] * 100)
+        # Build the mating pool
+        pool = []
+        for i in range(len(pop)):
+            prob = int(evals_aux[i] * 100)
 
-        for j in range(prob):
-            pool.append(pop[i])
+            for j in range(prob):
+                pool.append(pop[i])
 
-    # Randomly select two parents
-    p1 = random.choice(pool)
-    p2 = random.choice(pool)
-    print("\nParent 1: ")
-    print_chromosome(p1)
-    print("\nParent 2: ")
-    print_chromosome(p2)
+        # Randomly select two parents
+        p1 = random.choice(pool)
+        p2 = random.choice(pool)
+        print("\nParent 1: ")
+        print_chromosome(p1)
+        print("\nParent 2: ")
+        print_chromosome(p2)
 
-    # Select crossover method
-    method = random.randint(0, 1)
-    child = p1
-    m = calc_m(pop[0])
-    n = len(pop[0])
+        # Select crossover method
+        method = random.randint(0, 1)
+        child = p1
+        m = calc_m(pop[0])
+        n = len(pop[0])
 
-    # Apply vertical crossover
-    if method == 0:
-        rand_v = random.randint(1, m - 1)
-        print("\nSlice vertically by: " + str(rand_v))
+        # Apply vertical crossover
+        if method == 0:
+            rand_v = random.randint(1, m - 1)
+            print("\nSlice vertically by: " + str(rand_v))
 
-        for i in range(len(p1)):
-            print(p1[i][0:rand_v] + "|", end="")
-            print(p2[i][rand_v:])
-            child[i] = p1[i][0:rand_v] + p2[i][rand_v:]
+            for i in range(len(p1)):
+                print(p1[i][:rand_v] + "|", end="")
+                print(p2[i][rand_v:])
+                child[i] = p1[i][:rand_v] + p2[i][rand_v:]
 
-    # Apply horizontal crossover
-    else:
-        rand_h = random.randint(1, n - 1)
-        print("\nSlice horizontally by: " + str(rand_h))
-        print_chromosome(p1[:rand_h])
-        [print("*", end="") for i in range(m)]
-        print()
-        print_chromosome(p2[rand_h:])
-        child = p1[:rand_h] + p2[rand_h:]
+        # Apply horizontal crossover
+        else:
+            rand_h = random.randint(1, n - 1)
+            print("\nSlice horizontally by: " + str(rand_h))
+            print_chromosome(p1[:rand_h])
+            [print("*", end="") for i in range(m)]
+            print()
+            print_chromosome(p2[rand_h:])
+            child = p1[:rand_h] + p2[rand_h:]
+
+        # Select mutation method and apply
+        if round(random.uniform(0, 1), 2) < mutation_rate:
+            method = random.randint(0, 1)
+
+            # Apply removal
+            if method == 0:
+                cell_i = random.randint(1, n - 1)
+                cell_j = random.randint(1, len(child[cell_i]) - 1)
+
+                while child[cell_i][cell_j] != "-":
+                    cell_i = random.randint(0, n - 1)
+                    cell_j = random.randint(0, len(child[cell_i]) - 1)
+
+                child[cell_i] = child[cell_i][:cell_j] + child[cell_i][cell_j + 1:]
+                print("\nMutate: removed a gap from (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
+                print_chromosome(child)
+
+            # Apply addition
+            else:
+                cell_i = random.randint(1, n - 1)
+                cell_j = random.randint(1, len(child[cell_i]) - 1)
+
+                child[cell_i] = child[cell_i][:cell_j] + "-" + child[cell_i][cell_j:]
+                print("\nMutate: added a gap in (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
+                print_chromosome(child)
+
+        # Add the child to the new population
+        new_pop.append(child)
 
     count = count + 1
