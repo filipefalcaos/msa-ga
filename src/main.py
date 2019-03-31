@@ -7,6 +7,7 @@ import nwalign3 as nw
 k = 1.2
 C = 100
 e = 1.5
+N = 100
 
 
 # Prints a chromosome's sequences
@@ -161,7 +162,7 @@ for c in range(C):
     print_chromosome(lines_list_aux)
 
 count = 0
-while count < 1000:
+while count < N:
 
     # Evaluate all chromosomes
     evals = []
@@ -170,4 +171,27 @@ while count < 1000:
 
     # New population
     new_pop = []
+
+    # Normalize the fitness
+    pop_sum = sum(evals)
+    evals_aux = []
+    for ev in evals:
+        evals_aux.append(ev / pop_sum)
+
+    # Build the mating pool
+    pool = []
+    for i in range(len(pop)):
+        prob = int(evals_aux[i] * 100)
+
+        for j in range(prob):
+            pool.append(pop[i])
+
+    # Randomly select two parents
+    p1 = random.choice(pool)
+    p2 = random.choice(pool)
+    print("\nParent 1: ")
+    print_chromosome(p1)
+    print("\nParent 2: ")
+    print_chromosome(p2)
+
     count = count + 1
