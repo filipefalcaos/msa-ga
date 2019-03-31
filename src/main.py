@@ -2,7 +2,6 @@ import math
 import random
 import nwalign3 as nw
 
-
 # Global vars
 k = 1.2
 C = 100
@@ -44,7 +43,6 @@ def add_spaces(lines):
 
 # Add the required gaps
 def add_gaps(lines):
-
     # Complete with gaps
     for i in range(len(lines)):
         diff = m_1 - len(lines[i])
@@ -162,7 +160,7 @@ for c in range(C):
     print_chromosome(lines_list_aux)
 
 count = 0
-while count < N:
+while count < 1:
 
     # Evaluate all chromosomes
     evals = []
@@ -193,5 +191,31 @@ while count < N:
     print_chromosome(p1)
     print("\nParent 2: ")
     print_chromosome(p2)
+
+    # Select crossover method
+    method = random.randint(0, 1)
+    child = p1
+    m = calc_m(pop[0])
+    n = len(pop[0])
+
+    # Apply vertical crossover
+    if method == 0:
+        rand_v = random.randint(1, m - 1)
+        print("\nSlice vertically by: " + str(rand_v))
+
+        for i in range(len(p1)):
+            print(p1[i][0:rand_v] + "|", end="")
+            print(p2[i][rand_v:])
+            child[i] = p1[i][0:rand_v] + p2[i][rand_v:]
+
+    # Apply horizontal crossover
+    else:
+        rand_h = random.randint(1, n - 1)
+        print("\nSlice horizontally by: " + str(rand_h))
+        print_chromosome(p1[:rand_h])
+        [print("*", end="") for i in range(m)]
+        print()
+        print_chromosome(p2[rand_h:])
+        child = p1[:rand_h] + p2[rand_h:]
 
     count = count + 1
