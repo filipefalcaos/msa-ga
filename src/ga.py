@@ -157,10 +157,10 @@ class GA:
 
         # Select mutation method and apply
         if round(random.uniform(0, 1), 2) < self.mutation_rate:
-            method = random.randint(0, 1)
+            rand = round(random.uniform(0, 1), 2)
 
             # Apply removal
-            if method == 0:
+            if rand < 0.3:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
 
@@ -171,12 +171,17 @@ class GA:
                 child[cell_i] = child[cell_i][:cell_j] + child[cell_i][cell_j + 1:]
                 # print("\nMutate: removed a gap from (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
 
-            # Apply addition
+            # Apply k addition
             else:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
+                k = random.randint(2, math.ceil(0.1 * utils.Utils.calc_m(child)))
+                to_add = ""
 
-                child[cell_i] = child[cell_i][:cell_j] + "-" + child[cell_i][cell_j:]
+                for i in range(k):
+                    to_add += "-"
+
+                child[cell_i] = child[cell_i][:cell_j] + to_add + child[cell_i][cell_j:]
                 # print("\nMutate: added a gap in (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
 
         # Return the child
@@ -223,7 +228,7 @@ class GA:
                 child = utils.Utils.add_gaps(child)
                 child = utils.Utils.remove_useless_gaps(child)
                 new_pop.append(child)
-                # print_chromosome(child)
+                # utils.Utils.print_chromosome(child)
 
             # Get the best chromosome
             best_val = 0
