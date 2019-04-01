@@ -23,10 +23,12 @@ class GA:
     @staticmethod
     def g_func(x, y):
         if (x != y) and (x != "-") and (y != "-"):
-            return 0
+            return -1
+        elif (x == y) and (x == "-") and (y == "-"):
+            return -0.5
         elif (x != y) and (x == "-" or y == "-"):
             return 1
-        elif x == y:
+        elif (x == y) and (x != "-") and (y != "-"):
             return 2
 
         return 0
@@ -133,19 +135,10 @@ class GA:
         m = utils.Utils.calc_m(pop[0])
         n = len(pop[0])
 
-        # Apply vertical crossover
-        if method == 0:
-            rand_v = random.randint(1, m - 1)
-            # print("\nSlice vertically by: " + str(rand_v))
-
-            for i in range(len(p1)):
-                child[i] = p1[i][:rand_v] + p2[i][rand_v:]
-
         # Apply horizontal crossover
-        else:
-            rand_h = random.randint(1, n - 1)
-            # print("\nSlice horizontally by: " + str(rand_h))
-            child = p1[:rand_h] + p2[rand_h:]
+        rand_h = random.randint(1, n - 1)
+        # print("\nSlice horizontally by: " + str(rand_h))
+        child = p1[:rand_h] + p2[rand_h:]
 
         # Return the child
         return child
@@ -175,7 +168,7 @@ class GA:
             else:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
-                k = random.randint(2, math.ceil(0.1 * utils.Utils.calc_m(child)))
+                k = random.randint(2, math.ceil(0.3 * utils.Utils.calc_m(child)))
                 to_add = ""
 
                 for i in range(k):
@@ -217,6 +210,10 @@ class GA:
 
                 # Select two parents
                 p1, p2 = self.select_parents(pop, evaluations)
+                # print("\nParent 1:")
+                # utils.Utils.print_chromosome(p1)
+                # print("\nParent 2:")
+                # utils.Utils.print_chromosome(p2)
 
                 # Apply a crossover operation on p1 and p2
                 child = self.apply_crossover(pop, p1, p2)
