@@ -2,12 +2,14 @@ import math
 import random
 import copy
 import nwalign3 as nw
+import numpy as np
 
 # Global vars
 k = 1.2
 C = 100
 e = 1.5
 N = 300
+N_min = 200
 mutation_rate = 0.03
 
 
@@ -143,6 +145,21 @@ def f_func(lines):
     return value
 
 
+# Returns if there are no relevant changes
+# after 100 generations
+def no_change(best):
+    if len(best) < N_min:
+        return False
+    else:
+        percent = int(0.2 * len(best))
+        last = best[-percent:]
+
+        if np.var(last) < 1.05:
+            return True
+
+    return False
+
+
 # Read input file string
 with open("../data/data_1.txt") as f:
     input_str = f.read()
@@ -190,6 +207,7 @@ for c in range(C):
 # Repeat N times or until a good solution
 # appears
 best_chromosome = None
+best_chromosomes = []
 count = 0
 new_pop = []
 print()
@@ -287,6 +305,15 @@ while count < N:
 
     # Print stats
     print("Generation " + str(count + 1) + ": " + str(best_val))
+
+    # Add best to the list
+    best_chromosomes.append(best_val)
+
+    # Break the execution if there are no
+    # relevant changes
+    if no_change(best_chromosomes):
+        print("\nAbort: no variation!", end="")
+        break
 
     # Update population
     pop = copy.deepcopy(new_pop)
