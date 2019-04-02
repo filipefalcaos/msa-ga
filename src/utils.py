@@ -4,8 +4,6 @@
 # removal of gaps and spaces from a matrix. It also reads and prepares
 # the input matrix for the GA.
 
-import math
-
 
 class Utils:
 

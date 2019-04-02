@@ -27,8 +27,8 @@ class GA:
             # Compute the pairwise scores
             for j in range(len(lines)):
                 if i != j:
-                    score = nw.score_alignment(lines[i], lines[j], gap_open=-1, gap_extend=-0.5, matrix='data/BLOSUM62')
-                    sum_score += score
+                    scr = nw.score_alignment(lines[i], lines[j], gap_open=-1, gap_extend=-0.5, matrix='matrix/BLOSUM62')
+                    sum_score += scr
 
             return sum_score
 
