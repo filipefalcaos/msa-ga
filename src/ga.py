@@ -125,8 +125,8 @@ class GA:
         if round(random.uniform(0, 1), 2) < self.mutation_rate:
             rand = round(random.uniform(0, 1), 2)
 
-            # Apply removal
-            if rand < 0.5:
+            # Apply gaps removal
+            if rand < 0.9:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
 
@@ -134,21 +134,31 @@ class GA:
                     cell_i = random.randint(0, n - 1)
                     cell_j = random.randint(0, len(child[cell_i]) - 1)
 
-                child[cell_i] = child[cell_i][:cell_j] + child[cell_i][cell_j + 1:]
-                # print("\nMutate: removed a gap from (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
+                # Get extending gap
+                gaps = Utils.get_interval_gaps(child, cell_i, cell_j)
+                start, end = gaps[0], gaps[len(gaps) - 1]
+
+                # Remove gaps
+                child[cell_i] = child[cell_i][:start] + child[cell_i][end + 1:]
+
+                # if start == end:
+                #     print("\nMutate: removed gap from (" + str(cell_i + 1) + ", " + str(start + 1) + ")")
+                # else:
+                #     print("\nMutate: removed gaps from (" + str(cell_i + 1) + ", " + str(start + 1) + ") until (" +
+                #           str(cell_i + 1) + ", " + str(end + 1) + ")")
 
             # Apply k addition
             else:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
-                k = random.randint(2, math.ceil(0.3 * Utils.calc_m(child)))
+                k = random.randint(1, math.ceil(0.1 * Utils.calc_m(child)))
                 to_add = ""
 
                 for i in range(k):
                     to_add += "-"
 
                 child[cell_i] = child[cell_i][:cell_j] + to_add + child[cell_i][cell_j:]
-                # print("\nMutate: added a gap in (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
+                # print("\nMutate: added " + str(k) + " gaps in (" + str(cell_i + 1) + ", " + str(cell_j + 1) + ")")
 
         # Return the child
         return child

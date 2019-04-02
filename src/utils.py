@@ -126,6 +126,36 @@ class Utils:
 
         return n_cols
 
+    # Get an interval of gaps by a given gap
+    @staticmethod
+    def get_interval_gaps(lines, cell_i, cell_j):
+        aux_cell_j = cell_j
+        gaps = []
+        symbol_found = False
+
+        # Find gaps after cell_j (inclusive)
+        while not symbol_found:
+            if cell_j > len(lines[cell_i]) - 1:
+                break
+            elif lines[cell_i][cell_j] == "-":
+                gaps.append(cell_j)
+                cell_j += 1
+            else:
+                symbol_found = True
+
+        # Find gaps before cell_j (exclusive)
+        aux_cell_j -= 1
+        while not symbol_found:
+            if aux_cell_j < 0:
+                break
+            elif lines[cell_i][aux_cell_j] == "-":
+                gaps.insert(0, aux_cell_j)
+                aux_cell_j -= 1
+            else:
+                symbol_found = True
+
+        return gaps
+
     @staticmethod
     def prepare_input(input_path):
 
