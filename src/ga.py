@@ -19,33 +19,20 @@ class GA:
         self.mutation_rate = mutation_rate
         self.e = e
 
-    # The g function defined in the paper
+    # Use nwalign to compute the score of the pairwise alignments
+    # using a BLOSUM62 scoring matrix
     @staticmethod
-    def g_func(x, y):
-        if (x != y) and (x != "-") and (y != "-"):
-            return -1
-        elif (x == y) and (x == "-") and (y == "-"):
-            return -0.5
-        elif (x != y) and (x == "-" or y == "-"):
-            return 1
-        elif (x == y) and (x != "-") and (y != "-"):
-            return 2
+    def evaluation_func(lines):
+        for i in range(len(lines)):
+            sum_score = 0
 
-        return 0
+            # Compute the pairwise scores
+            for j in range(len(lines)):
+                if i != j:
+                    score = nw.score_alignment(lines[i], lines[j], gap_open=-1, gap_extend=-0.5, matrix='data/BLOSUM62')
+                    sum_score += score
 
-    # Apply the f function defined in the paper
-    def f_func(self, lines):
-        value = 0
-        lines = utils.Utils.add_spaces(lines)
-        x = utils.Utils.get_gap_cols(lines)
-        m = utils.Utils.calc_m(lines)
-
-        for i in range(m):
-            for j in range(len(lines) - 1):
-                value += self.g_func(lines[j][i], lines[j + 1][i])
-
-        value = value - 2 * x * (len(lines) - 1) - self.e * x
-        return value
+            return sum_score
 
     # Returns if there are no relevant changes
     # after 100 generations
@@ -98,7 +85,7 @@ class GA:
     def eval_all(self, pop):
         evaluations = []
         for p in pop:
-            evaluations.append(self.f_func(p))
+            evaluations.append(self.evaluation_func(p))
 
         return evaluations
 
@@ -129,10 +116,6 @@ class GA:
     @staticmethod
     def apply_crossover(pop, p1, p2):
 
-        # Select crossover method
-        method = random.randint(0, 1)
-        child = p1
-        m = utils.Utils.calc_m(pop[0])
         n = len(pop[0])
 
         # Apply horizontal crossover
@@ -153,7 +136,7 @@ class GA:
             rand = round(random.uniform(0, 1), 2)
 
             # Apply removal
-            if rand < 0.3:
+            if rand < 0.5:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
 
@@ -231,7 +214,7 @@ class GA:
             best_val = 0
             best_chromosome = None
             for chromosome in new_pop:
-                curr_val = self.f_func(chromosome)
+                curr_val = self.evaluation_func(chromosome)
                 if curr_val >= best_val:
                     best_val = curr_val
                     best_chromosome = chromosome

@@ -4,6 +4,8 @@
 # removal of gaps and spaces from a matrix. It also reads and prepares
 # the input matrix for the GA.
 
+import math
+
 
 class Utils:
 
@@ -59,6 +61,17 @@ class Utils:
             diff = Utils.calc_m(lines) - len(lines[i])
             for j in range(diff):
                 lines[i] += "-"
+
+        return lines
+
+    # Add the offset columns
+    @staticmethod
+    def add_offset(lines):
+        offset = math.ceil(Utils.calc_m(lines) * 0.2)
+
+        for i in range(offset):
+            for j in range(len(lines)):
+                lines[j] = "-" + lines[j]
 
         return lines
 
