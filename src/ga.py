@@ -241,10 +241,6 @@ class GA:
                 print("\nAbort: no variation!", end="")
                 break
 
-            # Remove added spaces
-            for i in range(len(new_pop)):
-                new_pop[i]["chromosome"] = Utils.remove_spaces(new_pop[i]["chromosome"])
-
             # Update population
             # Add to the population the new generated chromosomes and
             # remove the same number of the worst chromosomes from

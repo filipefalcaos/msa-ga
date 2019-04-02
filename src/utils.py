@@ -30,26 +30,6 @@ class Utils:
 
         return m_aux
 
-    # Add spaces only to complete the columns of
-    # a matrix and make calculations easier
-    @staticmethod
-    def add_spaces(lines):
-        m = Utils.calc_m(lines)
-        for i in range(len(lines)):
-            diff = m - len(lines[i])
-            for j in range(diff):
-                lines[i] += " "
-
-        return lines
-
-    # Remove spaces to standardize
-    @staticmethod
-    def remove_spaces(lines):
-        for i in range(len(lines)):
-            lines[i] = lines[i].replace(" ", "")
-
-        return lines
-
     # Add the required gaps to produce an
     # initial alignment
     @staticmethod
@@ -60,17 +40,6 @@ class Utils:
             diff = Utils.calc_m(lines) - len(lines[i])
             for j in range(diff):
                 lines[i] += "-"
-
-        return lines
-
-    # Add the offset columns
-    @staticmethod
-    def add_offset(lines):
-        offset = math.ceil(Utils.calc_m(lines) * 0.2)
-
-        for i in range(offset):
-            for j in range(len(lines)):
-                lines[j] = "-" + lines[j]
 
         return lines
 
@@ -106,25 +75,6 @@ class Utils:
 
         # Return the new matrix
         return lines
-
-    # Get the number of columns with only gaps
-    @staticmethod
-    def get_gap_cols(lines):
-        n_cols = 0
-        only_gaps = True
-        n = len(lines)
-
-        for i in range(Utils.calc_m(lines)):
-            for j in range(n):
-                if (lines[j][i] != " ") and (lines[j][i] != "-"):
-                    only_gaps = False
-
-            if only_gaps:
-                n_cols += 1
-            else:
-                only_gaps = True
-
-        return n_cols
 
     # Get an interval of gaps by a given gap
     @staticmethod
