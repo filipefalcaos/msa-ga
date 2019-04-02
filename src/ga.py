@@ -5,7 +5,6 @@
 import nwalign3 as nw
 import numpy as np
 import random
-import copy
 import math
 from utils import Utils
 
@@ -74,20 +73,12 @@ class GA:
 
             # Add the chromosome generated and prints it
             lines_list_aux = Utils.add_gaps(lines_list_aux)
-            pop.append(lines_list_aux)
+            pop.append({"chromosome": lines_list_aux, "evaluation": 0})
             print("\nChromosome " + str(c + 1) + ":")
             Utils.print_chromosome(lines_list_aux)
 
         # Initial population
         return pop
-
-    # Evaluate all chromosomes
-    def eval_all(self, pop):
-        evaluations = []
-        for p in pop:
-            evaluations.append(self.evaluation_func(p))
-
-        return evaluations
 
     # Select two parents for a crossover operation
     @staticmethod
@@ -116,15 +107,15 @@ class GA:
     @staticmethod
     def apply_crossover(pop, p1, p2):
 
-        n = len(pop[0])
+        n = len(pop[0]["chromosome"])
 
         # Apply horizontal crossover
         rand_h = random.randint(1, n - 1)
         # print("\nSlice horizontally by: " + str(rand_h))
-        child = p1[:rand_h] + p2[rand_h:]
+        child = p1["chromosome"][:rand_h] + p2["chromosome"][rand_h:]
 
         # Return the child
-        return child
+        return {"chromosome": child, "evaluation": 0}
 
     # Apply a mutation on child
     def apply_mutation(self, pop, child):
@@ -186,7 +177,10 @@ class GA:
         while count < self.generations:
 
             # Evaluate all chromosomes
-            evaluations = self.eval_all(pop)
+            evaluations = []
+            for i in range(len(pop)):
+                pop[i]["evaluation"] = self.evaluation_func(pop[i]["chromosome"])
+                evaluations.append(pop[i]["evaluation"])
 
             # Repeat for all chromosomes
             for w in range(self.chromosomes):
@@ -194,30 +188,37 @@ class GA:
                 # Select two parents
                 p1, p2 = self.select_parents(pop, evaluations)
                 # print("\nParent 1:")
-                # utils.Utils.print_chromosome(p1)
+                # Utils.print_chromosome(p1["chromosome"])
                 # print("\nParent 2:")
-                # utils.Utils.print_chromosome(p2)
+                # Utils.print_chromosome(p2["chromosome"])
+
+                # Get crossover probability
+                rand = round(random.uniform(0, 1), 2)
 
                 # Apply a crossover operation on p1 and p2
-                child = self.apply_crossover(pop, p1, p2)
+                if rand < 0.5:
+                    child = self.apply_crossover(pop, p1, p2)
 
-                # Apply a mutation on child
-                child = self.apply_mutation(pop, child)
+                    # Apply a mutation on child
+                    child["chromosome"] = self.apply_mutation(pop, child["chromosome"])
 
-                # Add the child to the new population
-                child = Utils.add_gaps(child)
-                child = Utils.remove_useless_gaps(child)
-                new_pop.append(child)
-                # utils.Utils.print_chromosome(child)
+                    # Add the child to the new population
+                    child["chromosome"] = Utils.add_gaps(child["chromosome"])
+                    child["chromosome"] = Utils.remove_useless_gaps(child["chromosome"])
+                    new_pop.append(child)
+                    # print("\nChild:")
+                    # Utils.print_chromosome(child["chromosome"])
 
             # Get the best chromosome
             best_val = 0
             best_chromosome = None
-            for chromosome in new_pop:
-                curr_val = self.evaluation_func(chromosome)
+            for i in range(len(new_pop)):
+                curr_val = self.evaluation_func(new_pop[i]["chromosome"])
+                new_pop[i]["evaluation"] = curr_val
+
                 if curr_val >= best_val:
                     best_val = curr_val
-                    best_chromosome = chromosome
+                    best_chromosome = new_pop[i]["chromosome"]
 
             # Print stats
             print("Generation " + str(count + 1) + ": " + str(best_val))
@@ -231,9 +232,21 @@ class GA:
                 print("\nAbort: no variation!", end="")
                 break
 
+            # Remove added spaces
+            for i in range(len(new_pop)):
+                new_pop[i]["chromosome"] = Utils.remove_spaces(new_pop[i]["chromosome"])
+
             # Update population
-            pop = copy.deepcopy(new_pop)
-            pop = Utils.remove_spaces(pop)
+            # Add to the population the new generated chromosomes and
+            # remove the same number of the worst chromosomes from
+            # the original population
+            pop = sorted(pop, key=lambda k: k["evaluation"], reverse=True)
+            new_pop = sorted(new_pop, key=lambda k: k["evaluation"], reverse=True)
+
+            for i in range(len(new_pop)):
+                pop.pop()
+                pop.insert(0, new_pop[i])
+
             new_pop = []
             count = count + 1
 

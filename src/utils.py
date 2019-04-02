@@ -44,12 +44,11 @@ class Utils:
 
     # Remove spaces to standardize
     @staticmethod
-    def remove_spaces(pop):
-        for chromosome in pop:
-            for i in range(len(chromosome)):
-                chromosome[i] = chromosome[i].replace(" ", "")
+    def remove_spaces(lines):
+        for i in range(len(lines)):
+            lines[i] = lines[i].replace(" ", "")
 
-        return pop
+        return lines
 
     # Add the required gaps to produce an
     # initial alignment
