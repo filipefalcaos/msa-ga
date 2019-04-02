@@ -12,13 +12,12 @@ def main():
     parser.add_argument("-gens", metavar='-gen', type=int, help="Number of generations")
     parser.add_argument("-min_gens", metavar='-min', type=int, help="Minimum number of generations before stopping")
     parser.add_argument("-mutation_rate", metavar='-mut', type=float, help="Mutation rate")
-    parser.add_argument("-penalty", metavar='-p', type=float, help="Penalty for gap only columns")
 
     # Parse args
     args = parser.parse_args()
 
     # Run the GA
-    genetic_algorithm = GA(args.chromosomes, args.gens, args.min_gens, args.mutation_rate, args.penalty)
+    genetic_algorithm = GA(args.chromosomes, args.gens, args.min_gens, args.mutation_rate)
     genetic_algorithm.run_ga(args.input)
 
 

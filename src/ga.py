@@ -11,12 +11,11 @@ from utils import Utils
 
 class GA:
 
-    def __init__(self, chromosomes, generations, min_generations, mutation_rate, e):
+    def __init__(self, chromosomes, generations, min_generations, mutation_rate):
         self.chromosomes = chromosomes
         self.generations = generations
         self.min_generations = min_generations
         self.mutation_rate = mutation_rate
-        self.e = e
 
     # Use nwalign to compute the score of the pairwise alignments
     # using a BLOSUM62 scoring matrix
