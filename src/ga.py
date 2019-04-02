@@ -7,7 +7,7 @@ import numpy as np
 import random
 import copy
 import math
-import utils
+from utils import Utils
 
 
 class GA:
@@ -73,10 +73,10 @@ class GA:
                 lines_list_aux.append(alignment)
 
             # Add the chromosome generated and prints it
-            lines_list_aux = utils.Utils.add_gaps(lines_list_aux)
+            lines_list_aux = Utils.add_gaps(lines_list_aux)
             pop.append(lines_list_aux)
             print("\nChromosome " + str(c + 1) + ":")
-            utils.Utils.print_chromosome(lines_list_aux)
+            Utils.print_chromosome(lines_list_aux)
 
         # Initial population
         return pop
@@ -151,7 +151,7 @@ class GA:
             else:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
-                k = random.randint(2, math.ceil(0.3 * utils.Utils.calc_m(child)))
+                k = random.randint(2, math.ceil(0.3 * Utils.calc_m(child)))
                 to_add = ""
 
                 for i in range(k):
@@ -166,11 +166,11 @@ class GA:
     def run_ga(self, input_path):
 
         # Read input file string
-        lines_list = utils.Utils.prepare_input(input_path)
+        lines_list = Utils.prepare_input(input_path)
 
         # Prints the original chromosome
         print("Input matrix:")
-        utils.Utils.print_chromosome(lines_list)
+        Utils.print_chromosome(lines_list)
 
         # Create the initial population
         pop = self.init_pop(lines_list)
@@ -205,8 +205,8 @@ class GA:
                 child = self.apply_mutation(pop, child)
 
                 # Add the child to the new population
-                child = utils.Utils.add_gaps(child)
-                child = utils.Utils.remove_useless_gaps(child)
+                child = Utils.add_gaps(child)
+                child = Utils.remove_useless_gaps(child)
                 new_pop.append(child)
                 # utils.Utils.print_chromosome(child)
 
@@ -233,10 +233,10 @@ class GA:
 
             # Update population
             pop = copy.deepcopy(new_pop)
-            pop = utils.Utils.remove_spaces(pop)
+            pop = Utils.remove_spaces(pop)
             new_pop = []
             count = count + 1
 
         # Best solution
         print("\nBest solution:")
-        utils.Utils.print_chromosome(best_chromosome)
+        Utils.print_chromosome(best_chromosome)
