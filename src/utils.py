@@ -4,6 +4,10 @@
 # removal of gaps and spaces from a matrix. It also reads and prepares
 # the input matrix for the GA.
 
+import os
+import sys
+from contextlib import contextmanager
+
 
 class Utils:
 
@@ -118,3 +122,14 @@ class Utils:
         # Add the gaps
         lines_list = Utils.add_gaps(lines_list)
         return lines_list
+
+    @staticmethod
+    @contextmanager
+    def suppress_stdout():
+        with open(os.devnull, "w") as devnull:
+            old_stdout = sys.stdout
+            sys.stdout = devnull
+            try:
+                yield
+            finally:
+                sys.stdout = old_stdout

@@ -1,3 +1,4 @@
+import time
 import argparse
 from ga import GA
 
@@ -17,8 +18,11 @@ def main():
     args = parser.parse_args()
 
     # Run the GA
+    start = time.time()
     genetic_algorithm = GA(args.chromosomes, args.gens, args.min_gens, args.mutation_rate)
     genetic_algorithm.run_ga(args.input)
+    end = time.time()
+    print("\nRunning time: " + str(end - start) + " seconds")
 
 
 if __name__ == "__main__":

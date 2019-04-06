@@ -126,7 +126,7 @@ class GA:
             rand = round(random.uniform(0, 1), 2)
 
             # Apply gaps removal
-            if rand < 0.9:
+            if rand < 0.5:
                 cell_i = random.randint(1, n - 1)
                 cell_j = random.randint(1, len(child[cell_i]) - 1)
 
@@ -177,6 +177,7 @@ class GA:
 
         # Repeat for all generations or until a good solution
         # appears
+        best_val = None
         best_chromosome = None
         best_chromosomes = []
         count = 0
@@ -258,3 +259,4 @@ class GA:
         # Best solution
         print("\nBest solution:")
         Utils.print_chromosome(best_chromosome)
+        return best_val
